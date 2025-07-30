@@ -1,0 +1,6 @@
+@TCP_Socket_Web_API_HostAddress = http://localhost:5054
+
+GET {{TCP_Socket_Web_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
