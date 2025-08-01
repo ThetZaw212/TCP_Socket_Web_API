@@ -15,7 +15,7 @@ namespace TCP_Socket_Web_API.Controllers
         {
             string hl7Message = Hl7TemplateBuilder.BuildFromOrder(request);
 
-            var sender = new Hl7TcpSenderService("192.168.100.114", 5000); 
+            var sender = new Hl7TcpSenderService("192.168.100.253", 5050); 
             bool sent = await sender.SendMessageAsync(hl7Message);
 
             return sent ? Ok("HL7 sent successfully.") : StatusCode(500, "Failed to send HL7.");
