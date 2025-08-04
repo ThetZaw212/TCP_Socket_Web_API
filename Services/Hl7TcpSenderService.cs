@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 
 namespace TCP_Socket_Web_API.Services
@@ -56,21 +57,53 @@ namespace TCP_Socket_Web_API.Services
 
                         Console.WriteLine("📨 Received ACK:\n" + ackVisible);
 
-                        if (ackRaw.Contains("MSA|AA"))
+                        string msaSegment = ackRaw.Split('\r').FirstOrDefault(s => s.StartsWith("MSA|")) ?? "";
+                        if (msaSegment != null)
                         {
-                            Console.WriteLine("✅ Valid ACK received");
-                            return true;
+                            var fields = msaSegment.Split('|');
+                            string ackCode = fields.Length > 1 ? fields[1] : "";
+
+                            switch (ackCode)
+                            {
+                                case "AA":
+                                    Console.WriteLine("✅ Valid ACK received And Application Accept.");
+                                    return true;
+
+                                case "AR":
+                                    Console.WriteLine("⚠️ Application Reject");
+                                    await Task.Delay(1000);
+                                    break;
+
+                                case "AE":
+                                    Console.WriteLine("❗ Application Error");
+                                    break;
+
+                                case "CA":
+                                    Console.WriteLine("✅ Commit Accept");
+                                    break;
+
+                                case "CE":
+                                    Console.WriteLine("❗ Commit Error");
+                                    break;
+
+                                case "CR":
+                                    Console.WriteLine("⚠️ Commit Reject");
+                                    break;
+
+                                default:
+                                    Console.WriteLine("Unknown ACK code: " + ackCode);
+                                    break;
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("⚠️ ACK received but not AA. Retrying...");
-                            await Task.Delay(1000); // Optional delay between retries
+                            Console.WriteLine("❌ No MSA segment found in ACK");
                         }
+
                     }
                     else
                     {
                         Console.WriteLine("⚠️ No ACK received. Retrying...");
-                        await Task.Delay(1000);
                     }
                 }
                 catch (SocketException se)
