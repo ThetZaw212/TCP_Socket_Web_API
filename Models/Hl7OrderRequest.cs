@@ -14,5 +14,6 @@
         public string OrderTime { get; set; } = null!;
         public string CollectionTime { get; set; } = null!;
         public List<string> TestCodes { get; set; } = null!;
+        public string? FillerOrderNumber { get; set; }
     }
 }
