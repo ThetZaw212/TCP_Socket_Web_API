@@ -33,8 +33,9 @@ namespace TCP_Socket_Web_API.Services
             string pid = $"PID|1||{request.PatientId}||^{request.PatientName}||{request.DOB}|{request.Gender}|||{request.Address}|MMR||||||||||||||||||N";
             string pv1 = $"PV1|1|O|OUTP||||{request.DoctorId}^{request.DoctorName}||||||||||||O|||||||||||||||||||||||||{request.OrderTime}|";
 
-            // ORC-1 = XO → Cancel
-            string orc = $"ORC|XO|{request.OrderNumber}|{request.DoctorId}^{request.DoctorName}|CA|||{request.SampleType}||{request.OrderTime}|{request.CollectionTime}";
+            // ORC-1 = CA → Cancel
+            string orc = $"ORC|CA|{request.OrderNumber}|{request.FillerOrderNumber}|CA|||||{request.OrderTime}|||{request.DoctorId}^{request.DoctorName}";
+
 
             // You *may* need at least one OBR to specify which test(s) to cancel
             var obrs = new List<string>();
